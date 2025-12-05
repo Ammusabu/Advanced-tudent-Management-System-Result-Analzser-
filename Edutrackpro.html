@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack Pro | Advanced School Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --section-colors: [#3498db, #e74c3c, #2ecc71, #f39c12, #9b59b6, #1abc9c];
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li a i {
+            margin-right: 8px;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .main-menu {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #f5f7fa, #e4e8eb);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        table th {
+            background-color: var(--light);
+            font-weight: 600;
+        }
+
+        table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-danger {
+            background-color: var(--accent);
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .select-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .alert i {
+            margin-right: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--accent);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 40px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--dark);
+            color: white;
+            margin-top: 40px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            padding: 10px 15px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .student-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .student-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .student-id {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .student-performance {
+            text-align: right;
+        }
+
+        .student-average {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .student-grade {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background-color: var(--light);
+        }
+
+        .grade-Aplus { background-color: #3498db; color: white; }
+        .grade-A { background-color: #2ecc71; color: white; }
+        .grade-B { background-color: #f39c12; color: white; }
+        .grade-C { background-color: #e67e22; color: white; }
+        .grade-D { background-color: #e74c3c; color: white; }
+        .grade-E { background-color: #95a5a6; color: white; }
+        .grade-F { background-color: #7f8c8d; color: white; }
+
+        .section-card {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .section-meta {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .progress-container {
+            height: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--secondary);
+            border-radius: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #7f8c8d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .student-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .student-avatar {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .student-performance {
+                text-align: center;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                EduTrack<span>Pro</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" onclick="showDashboard()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#" onclick="showStudents()"><i class="fas fa-users"></i> Students</a></li>
+                    <li><a href="#" onclick="showSections()"><i class="fas fa-layer-group"></i> Sections</a></li>
+                    <li><a href="#" onclick="showAnalytics()"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Dashboard View -->
+        <div id="dashboard-view">
+            <div class="main-menu">
+                <h1 class="card-title"><i class="fas fa-tachometer-alt"></i> School Overview</h1>
+                
+                <div class="grid">
+                    <div class="stat-card">
+                        <h3>Total Students</h3>
+                        <div class="value" id="total-students">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Class Average</h3>
+                        <div class="value" id="class-average">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pass Percentage</h3>
+                        <div class="value" id="pass-percentage">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Sections</h3>
+                        <div class="value" id="total-sections">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-line"></i> Performance Trends</h2>
+                <div class="chart-container">
+                    <canvas id="performanceTrendChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-star"></i> Top Performers</h2>
+                    <div id="top-performers-list" class="empty-state">
+                        <i class="fas fa-user-graduate"></i>
+                        <h3>No Students Added Yet</h3>
+                        <p>Add students to see top performers</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-layer-group"></i> Section Overview</h2>
+                    <div id="section-overview" class="empty-state">
+                        <i class="fas fa-school"></i>
+                        <h3>No Sections Created Yet</h3>
+                        <p>Create sections to organize your students</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students View -->
+        <div id="students-view" style="display: none;">
+            <div class="card">
+                <div class="tabs">
+                    <div class="tab active" onclick="changeStudentTab('all-students')">All Students</div>
+                    <div class="tab" onclick="changeStudentTab('add-student')">Add Student</div>
+                    <div class="tab" onclick="changeStudentTab('import-export')">Import/Export</div>
+                </div>
+
+                <div class="tab-content active" id="all-students">
+                    <div class="search-box">
+                        <input type="text" id="student-search" placeholder="Search students..." oninput="filterStudentsBySection()">
+                        <button onclick="filterStudentsBySection()"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="form-group">
+                        <select class="select-control" id="section-filter" onchange="filterStudentsBySection()">
+                            <option value="">All Sections</option>
+                            <!-- Filled by JavaScript -->
+                        </select>
+                    </div>
+                    <div id="students-list" class="empty-state">
+                        <i class="fas fa-user-graduate"></i>
+                        <h3>No Students Added Yet</h3>
+                        <p>Add students to begin tracking performance</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="add-student">
+                    <h2 class="card-title"><i class="fas fa-user-plus"></i> Add New Student</h2>
+                    <div id="form-message"></div>
+                    <form id="student-form">
+                        <div class="grid">
+                            <div class="form-group">
+                                <label for="student-id">Student ID</label>
+                                <input type="text" id="student-id" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="student-name">Full Name</label>
+                                <input type="text" id="student-name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="student-section">Section</label>
+                                <select id="student-section" class="form-control" required>
+                                    <option value="">Select Section</option>
+                                    <!-- Filled by JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin: 20px 0 10px; color: var(--primary);"><i class="fas fa-book-open"></i> Subject Marks</h3>
+                        
+                        <div class="grid">
+                            <div class="form-group">
+                                <label for="english">English</label>
+                                <input type="number" id="english" class="form-control" min="0" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hindi">Hindi</label>
+                                <input type="number" id="hindi" class="form-control" min="0" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="maths">Maths</label>
+                                <input type="number" id="maths" class="form-control" min="0" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="science">Science</label>
+                                <input type="number" id="science" class="form-control" min="0" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="chemistry">Chemistry</label>
+                                <input type="number" id="chemistry" class="form-control" min="0" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="biology">Biology</label>
+                                <input type="number" id="biology" class="form-control" min="0" max="100" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Student</button>
+                    </form>
+                </div>
+
+                <div class="tab-content" id="import-export">
+                    <h2 class="card-title"><i class="fas fa-file-import"></i> Import/Export Data</h2>
+                    <div class="grid">
+                        <div class="card">
+                            <h3><i class="fas fa-file-import"></i> Import Students</h3>
+                            <div class="form-group">
+                                <label>Select CSV File</label>
+                                <input type="file" id="import-file" class="form-control" accept=".csv">
+                            </div>
+                            <button class="btn" onclick="importStudents()"><i class="fas fa-upload"></i> Import</button>
+                            <div class="form-group">
+                                <a href="#" onclick="downloadSampleCSV()"><i class="fas fa-download"></i> Download Sample CSV</a>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3><i class="fas fa-file-export"></i> Export Data</h3>
+                            <div class="form-group">
+                                <label>Select Data to Export</label>
+                                <select class="form-control" id="export-type">
+                                    <option value="all">All Students</option>
+                                    <option value="section">By Section</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="export-section-container" style="display: none;">
+                                <label>Select Section</label>
+                                <select class="form-control" id="export-section">
+                                    <!-- Filled by JavaScript -->
+                                </select>
+                            </div>
+                            <button class="btn" onclick="exportData()"><i class="fas fa-download"></i> Export</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sections View -->
+        <div id="sections-view" style="display: none;">
+            <div class="card">
+                <div class="tabs">
+                    <div class="tab active" onclick="changeSectionTab('manage-sections')">Manage Sections</div>
+                    <div class="tab" onclick="changeSectionTab('add-section')">Add Section</div>
+                </div>
+
+                <div class="tab-content active" id="manage-sections">
+                    <div id="sections-list" class="empty-state">
+                        <i class="fas fa-school"></i>
+                        <h3>No Sections Created Yet</h3>
+                        <p>Create sections to organize your students</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="add-section">
+                    <h2 class="card-title"><i class="fas fa-plus-circle"></i> Add New Section</h2>
+                    <div id="section-form-message"></div>
+                    <form id="section-form">
+                        <div class="grid">
+                            <div class="form-group">
+                                <label for="section-name">Section Name</label>
+                                <input type="text" id="section-name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="section-teacher">Class Teacher</label>
+                                <input type="text" id="section-teacher" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="section-room">Room Number</label>
+                                <input type="text" id="section-room" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="section-capacity">Max Students</label>
+                                <input type="number" id="section-capacity" class="form-control" min="1" value="45" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Section</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics View -->
+        <div id="analytics-view" style="display: none;">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-pie"></i> Class Analytics</h2>
+                
+                <div id="analytics-empty-state" class="empty-state">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>No Data Available</h3>
+                    <p>Add students and sections to see analytics</p>
+                </div>
+                
+                <div id="analytics-content" style="display: none;">
+                    <div class="grid">
+                        <div class="stat-card">
+                            <h3>Highest Score</h3>
+                            <div class="value" id="highest-score">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Lowest Score</h3>
+                            <div class="value" id="lowest-score">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Students Passed</h3>
+                            <div class="value" id="students-passed">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Students Failed</h3>
+                            <div class="value" id="students-failed">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="subjectChart"></canvas>
+                    </div>
+                    
+                    <div class="grid">
+                        <div class="card">
+                            <h3 class="card-title"><i class="fas fa-chart-pie"></i> Grade Distribution</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="gradeDistributionChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3 class="card-title"><i class="fas fa-users"></i> Section-wise Performance</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="sectionPerformanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="card-title"><i class="fas fa-trophy"></i> Top Performers</h3>
+                    <table id="top-performers">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Section</th>
+                                <th>Average</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div class="modal" id="student-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Student Details</div>
+                <button class="modal-close" onclick="closeModal('student-modal')">&times;</button>
+            </div>
+            <div id="student-modal-content">
+                <!-- Filled by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 EduTrack Pro - School Management System</p>
+    </footer>
+
+    <script>
+        // Main Data Structure - Starts empty
+        let schoolData = {
+            sections: [],
+            students: []
+        };
+
+        // Chart instances
+        let subjectChart;
+        let gradeDistributionChart;
+        let sectionPerformanceChart;
+        let performanceTrendChart;
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize with sample data for demonstration
+            // In a real app, you would load data from a database
+            initSampleData();
+            
+            // Initialize charts
+            initCharts();
+            
+            // Form submissions
+            document.getElementById('student-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addStudent();
+            });
+            
+            document.getElementById('section-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addSection();
+            });
+            
+            // Export type change
+            document.getElementById('export-type').addEventListener('change', function() {
+                const exportSectionContainer = document.getElementById('export-section-container');
+                if (this.value === 'section') {
+                    exportSectionContainer.style.display = 'block';
+                    populateExportSections();
+                } else {
+                    exportSectionContainer.style.display = 'none';
+                }
+            });
+            
+            // Initialize views
+            renderDashboard();
+            renderStudents();
+            renderSections();
+        });
+
+        // Initialize with some sample data for demonstration
+        function initSampleData() {
+            // No sample data - starts fresh
+        }
+
+        // View navigation functions
+        function showDashboard() {
+            document.getElementById('dashboard-view').style.display = 'block';
+            document.getElementById('students-view').style.display = 'none';
+            document.getElementById('sections-view').style.display = 'none';
+            document.getElementById('analytics-view').style.display = 'none';
+            
+            // Update active nav link
+            document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+            document.querySelector('nav a[onclick="showDashboard()"]').classList.add('active');
+            
+            renderDashboard();
+        }
+
+        function showStudents() {
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('students-view').style.display = 'block';
+            document.getElementById('sections-view').style.display = 'none';
+            document.getElementById('analytics-view').style.display = 'none';
+            
+            // Update active nav link
+            document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+            document.querySelector('nav a[onclick="showStudents()"]').classList.add('active');
+            
+            renderStudents();
+        }
+
+        function showSections() {
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('students-view').style.display = 'none';
+            document.getElementById('sections-view').style.display = 'block';
+            document.getElementById('analytics-view').style.display = 'none';
+            
+            // Update active nav link
+            document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+            document.querySelector('nav a[onclick="showSections()"]').classList.add('active');
+            
+            renderSections();
+        }
+
+        function showAnalytics() {
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('students-view').style.display = 'none';
+            document.getElementById('sections-view').style.display = 'none';
+            document.getElementById('analytics-view').style.display = 'block';
+            
+            // Update active nav link
+            document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+            document.querySelector('nav a[onclick="showAnalytics()"]').classList.add('active');
+            
+            renderAnalytics();
+        }
+
+        // Tab navigation functions
+        function changeStudentTab(tabId) {
+            document.querySelectorAll('#students-view .tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#students-view .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`#students-view .tab[onclick="changeStudentTab('${tabId}')"]`).classList.add('active');
+            
+            if (tabId === 'add-student') {
+                populateSectionDropdown('student-section');
+            } else if (tabId === 'import-export') {
+                populateExportSections();
+            }
+        }
+
+        function changeSectionTab(tabId) {
+            document.querySelectorAll('#sections-view .tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('#sections-view .tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`#sections-view .tab[onclick="changeSectionTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showStudentDetails(studentId) {
+            const student = schoolData.students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            const section = getSectionById(student.sectionId);
+            const avg = calculateAverage(student.marks);
+            const grade = calculateGrade(avg);
+            
+            const modalContent = document.getElementById('student-modal-content');
+            modalContent.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                    <div class="student-avatar" style="width: 80px; height: 80px; font-size: 32px;">${student.name.charAt(0)}</div>
+                    <div style="margin-left: 20px;">
+                        <h2 style="margin: 0;">${student.name}</h2>
+                        <p style="margin: 5px 0; color: #7f8c8d;">${student.id}</p>
+                        <p style="margin: 5px 0;">${section ? section.name : 'Unknown Section'}</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-around; text-align: center; margin-bottom: 20px;">
+                    <div>
+                        <div style="font-size: 12px; color: #7f8c8d;">Average</div>
+                        <div style="font-size: 24px; font-weight: bold;">${avg.toFixed(2)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #7f8c8d;">Grade</div>
+                        <div style="font-size: 24px; font-weight: bold;"><span class="student-grade ${getGradeClass(grade)}">${grade}</span></div>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 20px 0 10px; color: var(--primary);">Subject Marks</h3>
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Marks</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(student.marks).map(([subject, mark]) => {
+                            const subjectGrade = calculateGrade(mark);
+                            return `
+                                <tr>
+                                    <td>${subject.charAt(0).toUpperCase() + subject.slice(1)}</td>
+                                    <td>${mark}</td>
+                                    <td><span class="student-grade ${getGradeClass(subjectGrade)}">${subjectGrade}</span></td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 20px; text-align: right;">
+                    <button class="btn btn-danger" onclick="deleteStudent('${student.id}')"><i class="fas fa-trash"></i> Delete Student</button>
+                </div>
+            `;
+            
+            openModal('student-modal');
+        }
+
+        // Calculation functions
+        function calculateAverage(marks) {
+            const values = Object.values(marks);
+            return values.reduce((sum, mark) => sum + mark, 0) / values.length;
+        }
+
+        function calculateGrade(average) {
+            if (average >= 90) return 'A+';
+            if (average >= 80) return 'A';
+            if (average >= 70) return 'B';
+            if (average >= 60) return 'C';
+            if (average >= 50) return 'D';
+            if (average >= 40) return 'E';
+            return 'F';
+        }
+
+        function getGradeClass(grade) {
+            return `grade-${grade.replace('+', 'plus')}`;
+        }
+
+        function getSectionById(sectionId) {
+            return schoolData.sections.find(section => section.id === sectionId);
+        }
+
+        function getSectionColor(sectionId) {
+            const section = getSectionById(sectionId);
+            return section ? section.color : '#7f8c8d';
+        }
+
+        function getSectionName(sectionId) {
+            const section = getSectionById(sectionId);
+            return section ? section.name : 'Unknown Section';
+        }
+
+        function getStudentsInSection(sectionId) {
+            return schoolData.students.filter(student => student.sectionId === sectionId);
+        }
+
+        function calculateClassAnalytics() {
+            let total = 0;
+            let passed = 0;
+            let highest = 0;
+            let lowest = 100;
+            
+            const subjectTotals = {
+                english: 0,
+                hindi: 0,
+                maths: 0,
+                science: 0,
+                chemistry: 0,
+                biology: 0
+            };
+            
+            const gradeDistribution = {
+                'A+': 0,
+                'A': 0,
+                'B': 0,
+                'C': 0,
+                'D': 0,
+                'E': 0,
+                'F': 0
+            };
+            
+            const sectionStats = {};
+            
+            // Initialize section stats
+            schoolData.sections.forEach(section => {
+                sectionStats[section.id] = {
+                    name: section.name,
+                    color: section.color,
+                    studentCount: 0,
+                    totalAverage: 0,
+                    passed: 0
+                };
+            });
+            
+            // Calculate student stats
+            schoolData.students.forEach(student => {
+                const avg = calculateAverage(student.marks);
+                total += avg;
+                
+                if (avg > highest) highest = avg;
+                if (avg < lowest) lowest = avg;
+                
+                if (avg >= 40) passed++;
+                
+                // Subject totals
+                for (const subject in student.marks) {
+                    subjectTotals[subject] += student.marks[subject];
+                }
+                
+                // Grade distribution
+                const grade = calculateGrade(avg);
+                gradeDistribution[grade]++;
+                
+                // Section stats
+                if (sectionStats[student.sectionId]) {
+                    sectionStats[student.sectionId].studentCount++;
+                    sectionStats[student.sectionId].totalAverage += avg;
+                    if (avg >= 40) sectionStats[student.sectionId].passed++;
+                }
+            });
+            
+            const studentCount = schoolData.students.length;
+            const classAverage = studentCount > 0 ? total / studentCount : 0;
+            const passPercentage = studentCount > 0 ? (passed / studentCount) * 100 : 0;
+            
+            // Calculate subject averages
+            const subjectAverages = {};
+            for (const subject in subjectTotals) {
+                subjectAverages[subject] = studentCount > 0 ? subjectTotals[subject] / studentCount : 0;
+            }
+            
+            // Calculate section averages
+            const sectionAverages = [];
+            for (const sectionId in sectionStats) {
+                const section = sectionStats[sectionId];
+                sectionAverages.push({
+                    name: section.name,
+                    color: section.color,
+                    average: section.studentCount > 0 ? section.totalAverage / section.studentCount : 0,
+                    passPercentage: section.studentCount > 0 ? (section.passed / section.studentCount) * 100 : 0
+                });
+            }
+            
+            return {
+                studentCount,
+                classAverage,
+                passPercentage,
+                highest,
+                lowest,
+                passed,
+                failed: studentCount - passed,
+                subjectAverages,
+                gradeDistribution,
+                sectionAverages
+            };
+        }
+
+        // Render functions
+        function renderDashboard() {
+            const analytics = calculateClassAnalytics();
+            
+            // Update stats
+            document.getElementById('total-students').textContent = analytics.studentCount;
+            document.getElementById('total-sections').textContent = schoolData.sections.length;
+            document.getElementById('class-average').textContent = analytics.classAverage.toFixed(2);
+            document.getElementById('pass-percentage').textContent = analytics.passPercentage.toFixed(2) + '%';
+            
+            // Show/hide empty states
+            const topPerformersList = document.getElementById('top-performers-list');
+            const sectionOverview = document.getElementById('section-overview');
+            
+            if (schoolData.students.length > 0) {
+                // Update top performers list
+                topPerformersList.innerHTML = '';
+                
+                // Sort students by average
+                const sortedStudents = [...schoolData.students].sort((a, b) => {
+                    return calculateAverage(b.marks) - calculateAverage(a.marks);
+                });
+                
+                sortedStudents.slice(0, 5).forEach(student => {
+                    const avg = calculateAverage(student.marks);
+                    const grade = calculateGrade(avg);
+                    const section = getSectionById(student.sectionId);
+                    
+                    const studentCard = document.createElement('div');
+                    studentCard.className = 'student-card';
+                    studentCard.onclick = () => showStudentDetails(student.id);
+                    studentCard.style.cursor = 'pointer';
+                    studentCard.innerHTML = `
+                        <div class="student-avatar">${student.name.charAt(0)}</div>
+                        <div class="student-info">
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-id">${student.id} | ${section ? section.name : 'Unknown'}</div>
+                        </div>
+                        <div class="student-performance">
+                            <div class="student-average">${avg.toFixed(2)}</div>
+                            <div class="student-grade ${getGradeClass(grade)}">${grade}</div>
+                        </div>
+                    `;
+                    topPerformersList.appendChild(studentCard);
+                });
+            } else {
+                topPerformersList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-graduate"></i>
+                        <h3>No Students Added Yet</h3>
+                        <p>Add students to see top performers</p>
+                    </div>
+                `;
+            }
+            
+            if (schoolData.sections.length > 0) {
+                // Update section overview
+                sectionOverview.innerHTML = '';
+                
+                schoolData.sections.forEach(section => {
+                    const studentsInSection = getStudentsInSection(section.id);
+                    const sectionCard = document.createElement('div');
+                    sectionCard.className = 'section-card';
+                    sectionCard.style.borderLeftColor = section.color;
+                    
+                    const filledPercentage = (studentsInSection.length / section.maxStudents) * 100;
+                    
+                    sectionCard.innerHTML = `
+                        <div class="section-header">
+                            <div class="section-title">${section.name}</div>
+                            <div class="section-meta">${studentsInSection.length}/${section.maxStudents} students</div>
+                        </div>
+                        <div>Class Teacher: ${section.teacher}</div>
+                        <div>Room: ${section.room}</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${filledPercentage}%; background-color: ${section.color};"></div>
+                        </div>
+                    `;
+                    sectionOverview.appendChild(sectionCard);
+                });
+            } else {
+                sectionOverview.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-school"></i>
+                        <h3>No Sections Created Yet</h3>
+                        <p>Create sections to organize your students</p>
+                    </div>
+                `;
+            }
+            
+            // Update performance trend chart
+            updatePerformanceTrendChart();
+        }
+
+        function renderStudents() {
+            populateSectionDropdown('section-filter');
+            filterStudentsBySection();
+        }
+
+        function renderSections() {
+            const sectionsList = document.getElementById('sections-list');
+            
+            if (schoolData.sections.length > 0) {
+                sectionsList.innerHTML = '';
+                
+                schoolData.sections.forEach(section => {
+                    const studentsInSection = getStudentsInSection(section.id);
+                    const filledPercentage = (studentsInSection.length / section.maxStudents) * 100;
+                    
+                    const sectionCard = document.createElement('div');
+                    sectionCard.className = 'card';
+                    sectionCard.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="margin-bottom: 10px;">${section.name} <span class="badge" style="background-color: ${section.color};">${section.id}</span></h3>
+                            <button class="btn btn-danger" onclick="deleteSection('${section.id}')"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                        <p><strong>Class Teacher:</strong> ${section.teacher}</p>
+                        <p><strong>Room:</strong> ${section.room}</p>
+                        <p><strong>Students:</strong> ${studentsInSection.length}/${section.maxStudents}</p>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${filledPercentage}%; background-color: ${section.color};"></div>
+                        </div>
+                    `;
+                    sectionsList.appendChild(sectionCard);
+                });
+            } else {
+                sectionsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-school"></i>
+                        <h3>No Sections Created Yet</h3>
+                        <p>Create sections to organize your students</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderAnalytics() {
+            const analytics = calculateClassAnalytics();
+            
+            if (schoolData.students.length > 0 && schoolData.sections.length > 0) {
+                document.getElementById('analytics-empty-state').style.display = 'none';
+                document.getElementById('analytics-content').style.display = 'block';
+                
+                // Update stats
+                document.getElementById('highest-score').textContent = analytics.highest.toFixed(2);
+                document.getElementById('lowest-score').textContent = analytics.lowest.toFixed(2);
+                document.getElementById('students-passed').textContent = analytics.passed;
+                document.getElementById('students-failed').textContent = analytics.failed;
+                
+                // Update top performers table
+                const topPerformersTable = document.querySelector('#top-performers tbody');
+                topPerformersTable.innerHTML = '';
+                
+                // Sort students by average
+                const sortedStudents = [...schoolData.students].sort((a, b) => {
+                    return calculateAverage(b.marks) - calculateAverage(a.marks);
+                });
+                
+                sortedStudents.slice(0, 10).forEach((student, index) => {
+                    const avg = calculateAverage(student.marks);
+                    const grade = calculateGrade(avg);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${student.id}</td>
+                        <td>${student.name}</td>
+                        <td>${getSectionName(student.sectionId)}</td>
+                        <td>${avg.toFixed(2)}</td>
+                        <td><span class="badge ${getGradeClass(grade)}">${grade}</span></td>
+                    `;
+                    topPerformersTable.appendChild(row);
+                });
+                
+                // Update charts
+                updateSubjectChart(analytics.subjectAverages);
+                updateGradeDistributionChart(analytics.gradeDistribution);
+                updateSectionPerformanceChart(analytics.sectionAverages);
+            } else {
+                document.getElementById('analytics-empty-state').style.display = 'block';
+                document.getElementById('analytics-content').style.display = 'none';
+            }
+        }
+
+        function filterStudentsBySection() {
+            const sectionId = document.getElementById('section-filter').value;
+            const searchTerm = document.getElementById('student-search').value.toLowerCase();
+            
+            let filteredStudents = schoolData.students;
+            
+            if (sectionId) {
+                filteredStudents = filteredStudents.filter(student => student.sectionId === sectionId);
+            }
+            
+            if (searchTerm) {
+                filteredStudents = filteredStudents.filter(student => 
+                    student.name.toLowerCase().includes(searchTerm) || 
+                    student.id.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderStudentsList(filteredStudents);
+        }
+
+        function renderStudentsList(students) {
+            const studentsList = document.getElementById('students-list');
+            
+            if (students.length > 0) {
+                studentsList.innerHTML = '';
+                
+                students.forEach(student => {
+                    const avg = calculateAverage(student.marks);
+                    const grade = calculateGrade(avg);
+                    const section = getSectionById(student.sectionId);
+                    
+                    const studentCard = document.createElement('div');
+                    studentCard.className = 'student-card';
+                    studentCard.onclick = () => showStudentDetails(student.id);
+                    studentCard.style.cursor = 'pointer';
+                    studentCard.innerHTML = `
+                        <div class="student-avatar" style="background-color: ${section ? section.color : '#7f8c8d'}">${student.name.charAt(0)}</div>
+                        <div class="student-info">
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-id">${student.id} | ${section ? section.name : 'Unknown Section'}</div>
+                        </div>
+                        <div class="student-performance">
+                            <div class="student-average">${avg.toFixed(2)}</div>
+                            <div class="student-grade ${getGradeClass(grade)}">${grade}</div>
+                        </div>
+                    `;
+                    studentsList.appendChild(studentCard);
+                });
+            } else {
+                studentsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-graduate"></i>
+                        <h3>No Students Found</h3>
+                        <p>Try changing your search criteria</p>
+                    </div>
+                `;
+            }
+        }
+
+        function searchStudents() {
+            filterStudentsBySection();
+        }
+
+        // Data manipulation functions
+        function addStudent() {
+            const id = document.getElementById('student-id').value.trim();
+            const name = document.getElementById('student-name').value.trim();
+            const sectionId = document.getElementById('student-section').value;
+            
+            // Validate inputs
+            if (!id || !name || !sectionId) {
+                showFormMessage('Please fill all required fields', 'danger');
+                return;
+            }
+            
+            // Check if ID already exists
+            if (schoolData.students.some(student => student.id === id)) {
+                showFormMessage('Student ID already exists!', 'danger');
+                return;
+            }
+            
+            // Get marks
+            const marks = {
+                english: parseInt(document.getElementById('english').value) || 0,
+                hindi: parseInt(document.getElementById('hindi').value) || 0,
+                maths: parseInt(document.getElementById('maths').value) || 0,
+                science: parseInt(document.getElementById('science').value) || 0,
+                chemistry: parseInt(document.getElementById('chemistry').value) || 0,
+                biology: parseInt(document.getElementById('biology').value) || 0
+            };
+            
+            // Validate marks (0-100)
+            for (const subject in marks) {
+                if (isNaN(marks[subject]) || marks[subject] < 0 || marks[subject] > 100) {
+                    showFormMessage(`Marks for ${subject} must be between 0 and 100`, 'danger');
+                    return;
+                }
+            }
+            
+            // Check section capacity
+            const section = getSectionById(sectionId);
+            const studentsInSection = getStudentsInSection(sectionId).length;
+            
+            if (studentsInSection >= section.maxStudents) {
+                showFormMessage(`Section ${section.name} has reached its maximum capacity (${section.maxStudents} students)`, 'danger');
+                return;
+            }
+            
+            // Add new student
+            schoolData.students.push({
+                id,
+                name,
+                sectionId,
+                marks
+            });
+            
+            // Show success message
+            showFormMessage('Student added successfully!', 'success');
+            
+            // Reset form
+            document.getElementById('student-form').reset();
+            
+            // Update views
+            renderDashboard();
+            renderStudents();
+            renderAnalytics();
+            
+            // Switch back to all students tab
+            changeStudentTab('all-students');
+        }
+
+        function addSection() {
+            const name = document.getElementById('section-name').value.trim();
+            const teacher = document.getElementById('section-teacher').value.trim();
+            const room = document.getElementById('section-room').value.trim();
+            const maxStudents = parseInt(document.getElementById('section-capacity').value) || 45;
+            
+            if (!name || !teacher || !room || !maxStudents) {
+                document.getElementById('section-form-message').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i> Please fill all required fields
+                    </div>
+                `;
+                return;
+            }
+            
+            if (maxStudents < 1) {
+                document.getElementById('section-form-message').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i> Maximum students must be at least 1
+                    </div>
+                `;
+                return;
+            }
+            
+            // Generate section ID
+            const id = 'SEC' + (schoolData.sections.length + 1).toString().padStart(3, '0');
+            
+            // Section colors - cycle through predefined colors
+            const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c'];
+            const color = colors[schoolData.sections.length % colors.length];
+            
+            // Add new section
+            schoolData.sections.push({
+                id,
+                name,
+                teacher,
+                room,
+                maxStudents,
+                color
+            });
+            
+            // Show success message
+            document.getElementById('section-form-message').innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> Section added successfully!
+                </div>
+            `;
+            
+            // Reset form
+            document.getElementById('section-form').reset();
+            
+            // Update views
+            renderDashboard();
+            renderStudents();
+            renderSections();
+            renderAnalytics();
+            
+            // Populate section dropdowns
+            populateSectionDropdown('section-filter');
+            populateSectionDropdown('student-section');
+            populateExportSections();
+            
+            // Switch back to manage sections tab
+            changeSectionTab('manage-sections');
+        }
+
+        function deleteSection(sectionId) {
+            if (getStudentsInSection(sectionId).length > 0) {
+                if (!confirm('This section contains students. Are you sure you want to delete it? All students in this section will also be deleted.')) {
+                    return;
+                }
+            } else {
+                if (!confirm('Are you sure you want to delete this section?')) {
+                    return;
+                }
+            }
+            
+            // Remove students in this section
+            schoolData.students = schoolData.students.filter(student => student.sectionId !== sectionId);
+            
+            // Remove the section
+            schoolData.sections = schoolData.sections.filter(section => section.id !== sectionId);
+            
+            // Update views
+            renderDashboard();
+            renderStudents();
+            renderSections();
+            renderAnalytics();
+        }
+
+        function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                // Remove the student
+                schoolData.students = schoolData.students.filter(student => student.id !== studentId);
+                
+                // Close modal
+                closeModal('student-modal');
+                
+                // Update views
+                renderDashboard();
+                renderStudents();
+                renderAnalytics();
+            }
+        }
+
+        function importStudents() {
+            const fileInput = document.getElementById('import-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a CSV file to import');
+                return;
+            }
+            
+            Papa.parse(file, {
+                header: true,
+                complete: function(results) {
+                    const importedStudents = results.data;
+                    let successCount = 0;
+                    let errorCount = 0;
+                    let errorMessages = [];
+                    
+                    importedStudents.forEach(row => {
+                        try {
+                            // Validate required fields
+                            if (!row.id || !row.name || !row.section) {
+                                errorCount++;
+                                errorMessages.push(`Missing required fields for student ${row.id || 'unknown'}`);
+                                return;
+                            }
+                            
+                            // Check if section exists
+                            const section = schoolData.sections.find(s => s.id === row.section);
+                            if (!section) {
+                                errorCount++;
+                                errorMessages.push(`Section ${row.section} not found for student ${row.id}`);
+                                return;
+                            }
+                            
+                            // Check section capacity
+                            if (getStudentsInSection(row.section).length >= section.maxStudents) {
+                                errorCount++;
+                                errorMessages.push(`Section ${section.name} is full for student ${row.id}`);
+                                return;
+                            }
+                            
+                            // Parse marks
+                            const marks = {
+                                english: parseInt(row.english) || 0,
+                                hindi: parseInt(row.hindi) || 0,
+                                maths: parseInt(row.maths) || 0,
+                                science: parseInt(row.science) || 0,
+                                chemistry: parseInt(row.chemistry) || 0,
+                                biology: parseInt(row.biology) || 0
+                            };
+                            
+                            // Validate marks
+                            for (const subject in marks) {
+                                if (isNaN(marks[subject]) || marks[subject] < 0 || marks[subject] > 100) {
+                                    errorCount++;
+                                    errorMessages.push(`Invalid marks for ${subject} for student ${row.id}`);
+                                    return;
+                                }
+                            }
+                            
+                            // Add student
+                            schoolData.students.push({
+                                id: row.id,
+                                name: row.name,
+                                sectionId: row.section,
+                                marks
+                            });
+                            
+                            successCount++;
+                        } catch (error) {
+                            errorCount++;
+                            errorMessages.push(`Error processing student ${row.id || 'unknown'}: ${error.message}`);
+                        }
+                    });
+                    
+                    // Show import results
+                    let message = `Imported ${successCount} students successfully.`;
+                    if (errorCount > 0) {
+                        message += ` ${errorCount} errors occurred.`;
+                        console.error('Import errors:', errorMessages);
+                    }
+                    
+                    alert(message);
+                    
+                    // Update views
+                    renderDashboard();
+                    renderStudents();
+                    renderAnalytics();
+                    
+                    // Clear file input
+                    fileInput.value = '';
+                },
+                error: function(error) {
+                    alert('Error parsing CSV file: ' + error.message);
+                }
+            });
+        }
+
+        function downloadSampleCSV() {
+            const csv = 'id,name,section,english,hindi,maths,science,chemistry,biology\n' +
+                        'S001,Rahul Sharma,SEC001,85,78,92,88,90,86\n' +
+                        'S002,Priya Patel,SEC001,72,85,68,75,80,78\n' +
+                        'S003,Amit Singh,SEC002,90,92,95,88,94,91';
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'students_sample.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportData() {
+            const exportType = document.getElementById('export-type').value;
+            
+            if (exportType === 'section') {
+                const sectionId = document.getElementById('export-section').value;
+                if (!sectionId) {
+                    alert('Please select a section to export');
+                    return;
+                }
+                const sectionStudents = schoolData.students.filter(student => student.sectionId === sectionId);
+                exportToCSV(sectionStudents, `students_${sectionId}.csv`);
+            } else {
+                exportToCSV(schoolData.students, 'all_students.csv');
+            }
+        }
+
+        function exportToCSV(data, filename) {
+            // Convert data to CSV
+            let csv = 'ID,Name,Section,English,Hindi,Maths,Science,Chemistry,Biology,Average,Grade\n';
+            
+            data.forEach(student => {
+                const avg = calculateAverage(student.marks);
+                const grade = calculateGrade(avg);
+                const section = getSectionById(student.sectionId);
+                
+                csv += `"${student.id}","${student.name}","${section ? section.name : 'Unknown'}",`;
+                csv += `${student.marks.english},${student.marks.hindi},${student.marks.maths},`;
+                csv += `${student.marks.science},${student.marks.chemistry},${student.marks.biology},`;
+                csv += `${avg.toFixed(2)},"${grade}"\n`;
+            });
+            
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Helper functions
+        function populateSectionDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.innerHTML = '<option value="">Select Section</option>';
+            
+            schoolData.sections.forEach(section => {
+                const option = document.createElement('option');
+                option.value = section.id;
+                option.textContent = `${section.name} (${getStudentsInSection(section.id).length}/${section.maxStudents})`;
+                dropdown.appendChild(option);
+            });
+        }
+
+        function populateExportSections() {
+            const dropdown = document.getElementById('export-section');
+            dropdown.innerHTML = '<option value="">Select Section</option>';
+            
+            schoolData.sections.forEach(section => {
+                const option = document.createElement('option');
+                option.value = section.id;
+                option.textContent = section.name;
+                dropdown.appendChild(option);
+            });
+        }
+
+        function showFormMessage(message, type) {
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            const formMessage = document.getElementById('form-message');
+            formMessage.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fas ${icon}"></i> ${message}
+                </div>
+            `;
+            
+            // Scroll to message
+            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Chart functions
+        function initCharts() {
+            // Subject performance chart
+            const subjectCtx = document.getElementById('subjectChart').getContext('2d');
+            subjectChart = new Chart(subjectCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['English', 'Hindi', 'Maths', 'Science', 'Chemistry', 'Biology'],
+                    datasets: [{
+                        label: 'Average Score',
+                        data: [0, 0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Subject-wise Average Scores',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        datalabels: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Marks (out of 100)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Grade distribution chart
+            const gradeCtx = document.getElementById('gradeDistributionChart').getContext('2d');
+            gradeDistributionChart = new Chart(gradeCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['A+', 'A', 'B', 'C', 'D', 'E', 'F'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(199, 199, 199, 0.7)',
+                            'rgba(255, 99, 132, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(199, 199, 199, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Grade Distribution',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            position: 'right',
+                        },
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return percentage > 0 ? `${percentage}%` : '';
+                            },
+                            color: '#fff',
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+            
+            // Section performance chart
+            const sectionCtx = document.getElementById('sectionPerformanceChart').getContext('2d');
+            sectionPerformanceChart = new Chart(sectionCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Average Score',
+                        data: [],
+                        backgroundColor: [],
+                        borderColor: [],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Section-wise Performance',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Average Score'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Performance trend chart
+            const trendCtx = document.getElementById('performanceTrendChart').getContext('2d');
+            performanceTrendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Performance Trend (Sample Data)',
+                            font: {
+                                size: 16
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Average Score'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateSubjectChart(subjectAverages) {
+            subjectChart.data.datasets[0].data = [
+                subjectAverages.english,
+                subjectAverages.hindi,
+                subjectAverages.maths,
+                subjectAverages.science,
+                subjectAverages.chemistry,
+                subjectAverages.biology
+            ];
+            subjectChart.update();
+        }
+
+        function updateGradeDistributionChart(gradeDistribution) {
+            gradeDistributionChart.data.datasets[0].data = [
+                gradeDistribution['A+'],
+                gradeDistribution['A'],
+                gradeDistribution['B'],
+                gradeDistribution['C'],
+                gradeDistribution['D'],
+                gradeDistribution['E'],
+                gradeDistribution['F']
+            ];
+            gradeDistributionChart.update();
+        }
+
+        function updateSectionPerformanceChart(sectionAverages) {
+            const labels = sectionAverages.map(section => section.name);
+            const data = sectionAverages.map(section => section.average);
+            const backgroundColors = sectionAverages.map(section => section.color);
+            const borderColors = sectionAverages.map(section => `${section.color.replace('0.7', '1')}`);
+            
+            sectionPerformanceChart.data.labels = labels;
+            sectionPerformanceChart.data.datasets[0].data = data;
+            sectionPerformanceChart.data.datasets[0].backgroundColor = backgroundColors;
+            sectionPerformanceChart.data.datasets[0].borderColor = borderColors;
+            sectionPerformanceChart.update();
+        }
+
+        function updatePerformanceTrendChart() {
+            // Only show trend data if we have sections and students
+            if (schoolData.sections.length > 0 && schoolData.students.length > 0) {
+                // Sample trend data - in a real app, this would come from historical data
+                const sectionTrends = schoolData.sections.slice(0, 3).map(section => {
+                    return {
+                        label: section.name,
+                        data: [
+                            Math.floor(Math.random() * 20) + 60,
+                            Math.floor(Math.random() * 20) + 65,
+                            Math.floor(Math.random() * 20) + 70,
+                            Math.floor(Math.random() * 20) + 65,
+                            Math.floor(Math.random() * 20) + 75,
+                            Math.floor(Math.random() * 20) + 80
+                        ],
+                        borderColor: section.color,
+                        backgroundColor: section.color.replace(')', ', 0.2)'),
+                        tension: 0.3,
+                        fill: true
+                    };
+                });
+                
+                performanceTrendChart.data.datasets = sectionTrends;
+                performanceTrendChart.update();
+            }
+        }
+    </script>
+</body>
+</html>
