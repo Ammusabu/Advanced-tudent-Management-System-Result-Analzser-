@@ -7,6 +7,7 @@ A web-based system to manage students, analyze marks, generate performance chart
 ---
 
 ## 📌 Overview
+![Home screen](Dashboard.png)
 
 The Advanced Student Management System is designed for schools and teachers to:
 
